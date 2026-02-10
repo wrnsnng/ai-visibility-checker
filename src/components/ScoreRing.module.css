@@ -1,0 +1,44 @@
+.wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.svg {
+  transform: rotate(-90deg);
+}
+
+.progress {
+  transition: stroke-dashoffset 100ms linear;
+}
+
+.content {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0;
+}
+
+.score {
+  font-size: 3rem;
+  font-weight: 800;
+  line-height: 1;
+  letter-spacing: -0.04em;
+}
+
+.grade {
+  font-size: 1.1rem;
+  font-weight: 700;
+  line-height: 1;
+  margin-top: 2px;
+}
+
+.label {
+  font-size: 0.75rem;
+  color: var(--text-tertiary);
+  margin-top: 4px;
+  font-weight: 500;
+}
