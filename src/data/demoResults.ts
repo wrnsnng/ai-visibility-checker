@@ -105,7 +105,7 @@ export const demoResults: Record<string, ScanResult> = {
             status: 'pass',
             score: 95,
             summary: 'Clear, descriptive meta description found (155 chars).',
-            details: '"GitHub is where over 100 million developers shape the future of software, together." — Good length, clear value proposition, AI-friendly.',
+            details: '"GitHub is where over 100 million developers shape the future of software, together." Good length, clear value proposition, AI-friendly.',
           },
           {
             id: 'og-tags',
@@ -199,10 +199,10 @@ export const demoResults: Record<string, ScanResult> = {
 > Stripe is a technology company that builds economic infrastructure for the internet.
 
 ## Products
-- Stripe Payments — Accept payments globally
-- Stripe Billing — Subscription management
-- Stripe Connect — Multi-party payments
-- Stripe Terminal — In-person payments
+- Stripe Payments: Accept payments globally
+- Stripe Billing: Subscription management
+- Stripe Connect: Multi-party payments
+- Stripe Terminal: In-person payments
 
 ## Documentation
 - [API Reference](https://stripe.com/docs/api)
@@ -251,7 +251,7 @@ export const demoResults: Record<string, ScanResult> = {
             status: 'pass',
             score: 100,
             summary: 'Excellent meta description (143 chars): clear, action-oriented.',
-            details: '"Stripe powers online and in-person payment processing and financial solutions for businesses of all sizes." — Concise, keyword-rich, AI-friendly.',
+            details: '"Stripe powers online and in-person payment processing and financial solutions for businesses of all sizes." Concise, keyword-rich, AI-friendly.',
           },
           {
             id: 'og-tags',
@@ -353,7 +353,7 @@ Allow: /`,
             score: 0,
             summary: 'No llms.txt file found.',
             details: 'An llms.txt file would help AI assistants understand your plumbing services, service area, and contact information. This is especially important for local businesses that people ask AI about.',
-            fixSnippet: `# Joe's Plumbing — Tulsa, OK
+            fixSnippet: `# Joe's Plumbing, Tulsa, OK
 
 > Full-service plumbing company serving Tulsa, Oklahoma and surrounding areas since 1998.
 
@@ -459,8 +459,8 @@ Tulsa, Broken Arrow, Owasso, Jenks, Bixby, Sand Springs, OK
             status: 'fail',
             score: 20,
             summary: 'Meta description is generic and too short (47 chars).',
-            details: '"Joe\'s Plumbing — Tulsa\'s #1 plumber. Call now!" — Too short, no services listed, no service area detail. AI models need more context to reference your business accurately.',
-            fixSnippet: `<meta name="description" content="Joe's Plumbing provides 24/7 emergency plumbing, water heater repair, and drain cleaning in Tulsa, Broken Arrow, and Owasso, OK. Licensed & insured since 1998. Free estimates — call (918) 555-0123." />`,
+            details: '"Joe\'s Plumbing, Tulsa\'s #1 plumber. Call now!" Too short, no services listed, no service area detail. AI models need more context to reference your business accurately.',
+            fixSnippet: `<meta name="description" content="Joe's Plumbing provides 24/7 emergency plumbing, water heater repair, and drain cleaning in Tulsa, Broken Arrow, and Owasso, OK. Licensed & insured since 1998. Free estimates, call (918) 555-0123." />`,
             fixLabel: 'Improved meta description',
           },
           {
@@ -471,7 +471,7 @@ Tulsa, Broken Arrow, Owasso, Jenks, Bixby, Sand Springs, OK
             score: 0,
             summary: 'No OpenGraph tags found.',
             details: 'Missing og:title, og:description, og:image, and og:url. When your site is shared or referenced, there\'s no rich preview available.',
-            fixSnippet: `<meta property="og:title" content="Joe's Plumbing — 24/7 Plumber in Tulsa, OK" />
+            fixSnippet: `<meta property="og:title" content="Joe's Plumbing: 24/7 Plumber in Tulsa, OK" />
 <meta property="og:description" content="Licensed plumbing services in Tulsa since 1998. Emergency repair, water heaters, drain cleaning. Free estimates." />
 <meta property="og:image" content="https://joes-plumbing-tulsa.com/images/og-image.jpg" />
 <meta property="og:url" content="https://joes-plumbing-tulsa.com" />
@@ -485,9 +485,9 @@ Tulsa, Broken Arrow, Owasso, Jenks, Bixby, Sand Springs, OK
             status: 'warning',
             score: 35,
             summary: 'Multiple H1 tags and heading hierarchy issues.',
-            details: 'Found 3 H1 tags (should be 1). Headings skip from H1 to H4 in places. Limited use of semantic HTML — mostly divs with classes. This makes it harder for AI to parse page structure.',
+            details: 'Found 3 H1 tags (should be 1). Headings skip from H1 to H4 in places. Limited use of semantic HTML, mostly divs with classes. This makes it harder for AI to parse page structure.',
             fixSnippet: `<!-- Use ONE H1 per page, then logical H2/H3 hierarchy -->
-<h1>Joe's Plumbing — Tulsa, OK</h1>
+<h1>Joe's Plumbing, Tulsa, OK</h1>
 <h2>Our Services</h2>
   <h3>Emergency Plumbing</h3>
   <h3>Water Heater Repair</h3>

@@ -1,9 +1,11 @@
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { Header } from './components/Header';
 import { Hero } from './components/Hero';
 import { Results } from './components/Results';
 import { Footer } from './components/Footer';
+import { DemoBanner } from './components/DemoBanner';
 import { demoResults } from './data/demoResults';
+import { handleCheckoutReturn, hasFullAccess, isDemoMode, clearAllAccess } from './lib/paidState';
 import type { ScanResult } from './types';
 import styles from './App.module.css';
 
@@ -15,14 +17,26 @@ export default function App() {
   const [result, setResult] = useState<ScanResult | null>(null);
   const [isScanning, setIsScanning] = useState(false);
   const [scanUrl, setScanUrl] = useState('');
+  const [showDemo, setShowDemo] = useState(isDemoMode);
 
-  const handleScan = useCallback(async (url: string) => {
+  // Handle return from Stripe Checkout
+  useEffect(() => {
+    handleCheckoutReturn();
+  }, []);
+
+  // Listen for access changes
+  useEffect(() => {
+    const handler = () => {
+      setShowDemo(isDemoMode());
+    };
+    window.addEventListener('aiv-access-changed', handler);
+    return () => window.removeEventListener('aiv-access-changed', handler);
+  }, []);
+
+  const scanUrlAsync = useCallback(async (url: string): Promise<ScanResult | null> => {
     const normalized = normalizeUrl(url);
-    setScanUrl(normalized);
-    setIsScanning(true);
-    setResult(null);
 
-    // Simulate network delay for UX
+    // Simulate network delay
     await new Promise((r) => setTimeout(r, 1800 + Math.random() * 1200));
 
     // Check demo results first
@@ -31,25 +45,31 @@ export default function App() {
     );
 
     if (demoMatch) {
-      setResult(demoResults[demoMatch]);
-    } else {
-      // Try the API
-      try {
-        const res = await fetch(`/api/scan?url=${encodeURIComponent(normalized)}`);
-        if (res.ok) {
-          const data = await res.json();
-          setResult(data);
-        } else {
-          // Fallback: generate a pseudo-random result for unknown URLs
-          setResult(generateFallbackResult(normalized));
-        }
-      } catch {
-        setResult(generateFallbackResult(normalized));
-      }
+      return demoResults[demoMatch];
     }
 
-    setIsScanning(false);
+    // Try the API
+    try {
+      const res = await fetch(`/api/scan?url=${encodeURIComponent(normalized)}`);
+      if (res.ok) {
+        return await res.json();
+      }
+      return generateFallbackResult(normalized);
+    } catch {
+      return generateFallbackResult(normalized);
+    }
   }, []);
+
+  const handleScan = useCallback(async (url: string) => {
+    const normalized = normalizeUrl(url);
+    setScanUrl(normalized);
+    setIsScanning(true);
+    setResult(null);
+
+    const scanResult = await scanUrlAsync(normalized);
+    setResult(scanResult);
+    setIsScanning(false);
+  }, [scanUrlAsync]);
 
   const handleReset = useCallback(() => {
     setResult(null);
@@ -57,8 +77,15 @@ export default function App() {
     setScanUrl('');
   }, []);
 
+  const handleExitDemo = useCallback(() => {
+    clearAllAccess();
+    setShowDemo(false);
+    window.dispatchEvent(new Event('aiv-access-changed'));
+  }, []);
+
   return (
     <div className={styles.app}>
+      {showDemo && <DemoBanner onExit={handleExitDemo} />}
       <Header />
       <main className={styles.main}>
         {!result && !isScanning && (
@@ -71,6 +98,7 @@ export default function App() {
             url={scanUrl}
             onBack={handleReset}
             onRescan={handleScan}
+            onScanUrl={scanUrlAsync}
           />
         )}
       </main>
@@ -80,7 +108,6 @@ export default function App() {
 }
 
 function generateFallbackResult(url: string): ScanResult {
-  // Generate a plausible mid-range result for unknown URLs
   const hash = url.split('').reduce((a, c) => ((a << 5) - a + c.charCodeAt(0)) | 0, 0);
   const seed = Math.abs(hash);
   const r = (min: number, max: number) => min + (seed % (max - min));
@@ -104,7 +131,7 @@ function generateFallbackResult(url: string): ScanResult {
             title: 'robots.txt',
             status: r(0, 100) > 50 ? 'pass' : 'warning',
             score: r(40, 90),
-            summary: 'robots.txt found — analysis requires live scan.',
+            summary: 'robots.txt found. Analysis requires live scan.',
             details: 'Enter a demo URL (github.com, stripe.com, or joes-plumbing-tulsa.com) for detailed analysis, or wait for the live scanning feature.',
           },
           {
@@ -114,7 +141,7 @@ function generateFallbackResult(url: string): ScanResult {
             status: 'fail',
             score: 0,
             summary: 'No llms.txt detected (most sites don\'t have one yet).',
-            details: 'The llms.txt standard is new. Full analysis requires a live scan — try a demo URL for detailed results.',
+            details: 'The llms.txt standard is new. Full analysis requires a live scan. Try a demo URL for detailed results.',
             fixSnippet: `# ${url} llms.txt\n\n> Description of your site goes here.\n\n## Key Pages\n- [About](/about)\n- [Docs](/docs)`,
             fixLabel: 'Example llms.txt template',
           },

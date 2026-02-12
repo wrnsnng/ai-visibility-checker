@@ -49,7 +49,7 @@ export function Hero({ onScan }: HeroProps) {
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
-            placeholder="Enter any URL — e.g. stripe.com"
+            placeholder="Enter any URL, e.g. stripe.com"
             className={styles.input}
             spellCheck={false}
             autoCapitalize="none"
